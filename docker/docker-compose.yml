@@ -1,0 +1,11 @@
+# Docker로 관리할 프로그램
+services:
+  api:
+    build: .
+    ports:
+      - "80:8000"
+  db: 
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: fastapi
