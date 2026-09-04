@@ -1,11 +1,28 @@
-# Docker로 관리할 프로그램
 services:
   api:
-    build: .
+    build: ./api
     ports:
       - "80:8000"
+    volumes:
+      - ./api:/app
+    depends_on:
+      - db
+      - redis
   db: 
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: fastapi
+    volumes:
+      - local_db:/var/lib/mysql
+  redis:
+    image: redis:8
+
+  worker:
+    build: ./worker
+    volumes:
+      - ./worker:/app
+
+# docker compose가 local_db라는 이름의 폴더(볼륨) 자동 생성
+volumes:
+  local_db:
