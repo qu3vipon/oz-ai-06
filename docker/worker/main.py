@@ -41,12 +41,16 @@ def run():
                 {"role": "user", "content": user_prompt},
             ],
             max_tokens=256,
-            temperature=0.7
+            temperature=0.7,
+            stream=True
         )
-        answer = response["choices"][0]["message"]["content"]
+        for chunk in response:
+            token = chunk["choices"][0]["delta"].get("content")
+            if token:
+                redis_client.publish(channel_id, token)
 
-        # 3) 결과를 알려줌(Publish)
-        redis_client.publish(channel_id, answer)
+        redis_client.publish(channel_id, "[DONE]")
+        
 
 # 이 파일을 직접 실행한 경우에만, run() 실행
 if __name__ == "__main__":
